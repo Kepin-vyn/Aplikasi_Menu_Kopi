@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Header Menu Kopi (Tetap Coklat) -->
+    <!-- Header Menu Kopi -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,11 +16,46 @@
         android:background="#3E2723"
         android:textColor="#FFFFFF" />
 
-    <!-- Area Konten Landscape (Kosong) -->
-    <LinearLayout
+    <EditText
+        android:id="@+id/etSearch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="#E0E0E0" />
+        android:layout_height="wrap_content"
+        android:hint="Cari menu kopi..."
+        android:padding="10dp"
+        android:layout_margin="4dp"
+        android:inputType="text"
+        android:background="@android:drawable/editbox_background_normal" />
+
+    <TextView
+        android:id="@+id/tvResultCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingBottom="4dp"
+        android:textSize="12sp"
+        android:textColor="#757575" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridView
+            android:id="@+id/gridViewCoffee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="2"
+            android:padding="8dp"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:background="#E0E0E0" />
+
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Menu tidak ditemukan"
+            android:gravity="center"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </LinearLayout>

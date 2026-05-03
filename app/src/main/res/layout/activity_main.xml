@@ -16,11 +16,43 @@
         android:background="#3E2723"
         android:textColor="#FFFFFF" />
 
-    <!-- Area Konten Portrait (Kosong) -->
-    <LinearLayout
+    <EditText
+        android:id="@+id/etSearch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#F5F5F5" />
+        android:layout_height="wrap_content"
+        android:hint="Cari menu kopi..."
+        android:padding="12dp"
+        android:layout_margin="8dp"
+        android:background="@android:drawable/editbox_background_normal" />
+
+    <TextView
+        android:id="@+id/tvResultCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingBottom="8dp"
+        android:textSize="12sp"
+        android:textColor="#757575" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/listViewCoffee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#F5F5F5"
+            android:divider="#EEEEEE"
+            android:dividerHeight="1dp" />
+
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Menu tidak ditemukan"
+            android:gravity="center"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </LinearLayout>
