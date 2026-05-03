@@ -25,6 +25,34 @@
         android:layout_margin="8dp"
         android:background="@android:drawable/editbox_background_normal" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/btnSortAZ"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sort A-Z"
+            android:textSize="12sp"
+            android:layout_marginEnd="4dp"
+            android:backgroundTint="#5D4037" />
+
+        <Button
+            android:id="@+id/btnSortZA"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sort Z-A"
+            android:textSize="12sp"
+            android:layout_marginStart="4dp"
+            android:backgroundTint="#5D4037" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvResultCount"
         android:layout_width="match_parent"

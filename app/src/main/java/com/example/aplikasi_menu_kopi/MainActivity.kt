@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.ListView
@@ -18,10 +19,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var adapter: CoffeeAdapter
     private lateinit var tvResultCount: TextView
     private lateinit var tvEmpty: TextView
-    
-    // Gunakan nullable agar tidak crash saat salah satu view tidak ada (Portrait vs Landscape)
     private var listView: ListView? = null
     private var gridView: GridView? = null
+    
+    // Modul 7 - State untuk menyimpan urutan sortir terakhir
+    private var currentSortOrder = "NONE"
+    private var currentList: MutableList<CoffeeItem> = coffeeArray.toMutableList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,32 +34,52 @@ class MainActivity : ComponentActivity() {
         tvResultCount = findViewById(R.id.tvResultCount)
         tvEmpty = findViewById(R.id.tvEmpty)
         val etSearch = findViewById<EditText>(R.id.etSearch)
+        val btnSortAZ = findViewById<Button>(R.id.btnSortAZ)
+        val btnSortZA = findViewById<Button>(R.id.btnSortZA)
 
-        // Inisialisasi adapter dengan data awal
-        adapter = CoffeeAdapter(coffeeArray.toList())
+        adapter = CoffeeAdapter(currentList)
 
-        // Inisialisasi ListView (ada di Portrait)
         listView = findViewById(R.id.listViewCoffee)
         listView?.adapter = adapter
 
-        // Inisialisasi GridView (ada di Landscape)
         gridView = findViewById(R.id.gridViewCoffee)
         gridView?.adapter = adapter
 
-        // Update tampilan jumlah awal
-        updateResultCount(coffeeArray.size)
+        updateResultCount(currentList.size)
 
-        // Logika Pencarian (Linear Search)
+        // Tombol Sortir A-Z
+        btnSortAZ.setOnClickListener {
+            currentSortOrder = "ASC"
+            val sortedList = bubbleSortAscending(currentList.toMutableList())
+            updateUI(sortedList)
+        }
+
+        // Tombol Sortir Z-A
+        btnSortZA.setOnClickListener {
+            currentSortOrder = "DESC"
+            val sortedList = bubbleSortDescending(currentList.toMutableList())
+            updateUI(sortedList)
+        }
+
         etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString()
-                val results = if (query.isNotEmpty()) {
-                    linearSearch(query)
+                var filteredResults = if (query.isNotEmpty()) {
+                    linearSearch(query).toMutableList()
                 } else {
-                    coffeeArray.toList()
+                    coffeeArray.toMutableList()
                 }
-                updateUI(results)
+
+                // Modul 7 - Re-apply sort order secara otomatis saat hasil pencarian berubah
+                filteredResults = when (currentSortOrder) {
+                    "ASC" -> bubbleSortAscending(filteredResults).toMutableList()
+                    "DESC" -> bubbleSortDescending(filteredResults).toMutableList()
+                    else -> filteredResults
+                }
+
+                currentList = filteredResults
+                updateUI(currentList)
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -76,7 +99,38 @@ class MainActivity : ComponentActivity() {
         return results
     }
 
+    // Modul 7 - Bubble Sort A-Z berdasarkan nama kopi
+    private fun bubbleSortAscending(list: MutableList<CoffeeItem>): List<CoffeeItem> {
+        val n = list.size
+        for (i in 0 until n - 1) {
+            for (j in 0 until n - i - 1) {
+                if (list[j].name.lowercase() > list[j + 1].name.lowercase()) {
+                    val temp = list[j]
+                    list[j] = list[j + 1]
+                    list[j + 1] = temp
+                }
+            }
+        }
+        return list
+    }
+
+    // Modul 7 - Bubble Sort Z-A berdasarkan nama kopi
+    private fun bubbleSortDescending(list: MutableList<CoffeeItem>): List<CoffeeItem> {
+        val n = list.size
+        for (i in 0 until n - 1) {
+            for (j in 0 until n - i - 1) {
+                if (list[j].name.lowercase() < list[j + 1].name.lowercase()) {
+                    val temp = list[j]
+                    list[j] = list[j + 1]
+                    list[j + 1] = temp
+                }
+            }
+        }
+        return list
+    }
+
     private fun updateUI(results: List<CoffeeItem>) {
+        currentList = results.toMutableList()
         updateResultCount(results.size)
         
         if (results.isEmpty()) {
@@ -85,7 +139,6 @@ class MainActivity : ComponentActivity() {
             gridView?.visibility = View.GONE
         } else {
             tvEmpty.visibility = View.GONE
-            // Kembalikan visibilitas sesuai orientasi
             listView?.visibility = View.VISIBLE
             gridView?.visibility = View.VISIBLE
             adapter.updateData(results)
@@ -110,11 +163,8 @@ class MainActivity : ComponentActivity() {
             val view = convertView ?: layoutInflater.inflate(R.layout.item_coffee, parent, false)
             val item = displayList[position]
             
-            val nameTextView = view.findViewById<TextView>(R.id.textName)
-            val categoryTextView = view.findViewById<TextView>(R.id.textCategory)
-
-            nameTextView.text = item.name
-            categoryTextView.text = item.category
+            view.findViewById<TextView>(R.id.textName).text = item.name
+            view.findViewById<TextView>(R.id.textCategory).text = item.category
             
             return view
         }
