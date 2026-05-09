@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.Aplikasi_Menu_Kopi" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Ganti ke MaterialComponents agar mendukung CardView dan fitur modern -->
+    <style name="Theme.Aplikasi_Menu_Kopi" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Warna Tema BrewList -->
+        <item name="colorPrimary">#3E2723</item>
+        <item name="colorPrimaryDark">#1B1B1B</item>
+        <item name="colorAccent">#795548</item>
+    </style>
 </resources>

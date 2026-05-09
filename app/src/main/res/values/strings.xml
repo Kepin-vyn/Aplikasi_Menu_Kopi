@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Aplikasi_Menu_Kopi</string>
+    <string name="app_name">brewlist</string>
+    <string name="login_title">Login brewlist</string>
+    <string name="content_description_logo">Logo brewlist</string>
+    <string name="hint_username">Masukkan Nama Anda</string>
+    <string name="btn_login">Masuk</string>
 </resources>

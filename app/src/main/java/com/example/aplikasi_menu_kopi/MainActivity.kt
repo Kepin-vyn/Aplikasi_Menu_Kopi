@@ -1,105 +1,105 @@
 package com.example.aplikasi_menu_kopi
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
-import android.widget.ListView
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    // MODUL 9 - Menggunakan Tag Logcat (Ganti dengan NIM Anda)
+    private val TAG = "NIM_ANDA"
 
     private lateinit var adapter: CoffeeAdapter
-    private lateinit var tvResultCount: TextView
-    private lateinit var tvEmpty: TextView
-    private var listView: ListView? = null
+    private var tvResultCount: TextView? = null
+    private var tvEmpty: TextView? = null
     private var gridView: GridView? = null
-    
-    // Modul 7 - State untuk menyimpan urutan sortir terakhir
+
     private var currentSortOrder = "NONE"
     private var currentList: MutableList<CoffeeItem> = coffeeArray.toMutableList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
 
-        tvResultCount = findViewById(R.id.tvResultCount)
-        tvEmpty = findViewById(R.id.tvEmpty)
-        val etSearch = findViewById<EditText>(R.id.etSearch)
-        val btnSortAZ = findViewById<Button>(R.id.btnSortAZ)
-        val btnSortZA = findViewById<Button>(R.id.btnSortZA)
+        try {
+            setContentView(R.layout.activity_main)
+            Log.d(TAG, "MainActivity: Memuat layout BrewList")
 
-        adapter = CoffeeAdapter(currentList)
+            // Inisialisasi View
+            tvResultCount = findViewById(R.id.tvResultCount)
+            tvEmpty = findViewById(R.id.tvEmpty)
+            val etSearch = findViewById<EditText>(R.id.etSearch)
+            val btnSortAZ = findViewById<Button>(R.id.btnSortAZ)
+            val btnSortZA = findViewById<Button>(R.id.btnSortZA)
+            gridView = findViewById(R.id.gridViewCoffee)
 
-        listView = findViewById(R.id.listViewCoffee)
-        listView?.adapter = adapter
+            // Setup Adapter
+            adapter = CoffeeAdapter(currentList)
+            gridView?.adapter = adapter
 
-        gridView = findViewById(R.id.gridViewCoffee)
-        gridView?.adapter = adapter
+            updateResultCount(currentList.size)
 
-        updateResultCount(currentList.size)
-
-        // Tombol Sortir A-Z
-        btnSortAZ.setOnClickListener {
-            currentSortOrder = "ASC"
-            val sortedList = bubbleSortAscending(currentList.toMutableList())
-            updateUI(sortedList)
-        }
-
-        // Tombol Sortir Z-A
-        btnSortZA.setOnClickListener {
-            currentSortOrder = "DESC"
-            val sortedList = bubbleSortDescending(currentList.toMutableList())
-            updateUI(sortedList)
-        }
-
-        etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                var filteredResults = if (query.isNotEmpty()) {
-                    linearSearch(query).toMutableList()
-                } else {
-                    coffeeArray.toMutableList()
-                }
-
-                // Modul 7 - Re-apply sort order secara otomatis saat hasil pencarian berubah
-                filteredResults = when (currentSortOrder) {
-                    "ASC" -> bubbleSortAscending(filteredResults).toMutableList()
-                    "DESC" -> bubbleSortDescending(filteredResults).toMutableList()
-                    else -> filteredResults
-                }
-
-                currentList = filteredResults
-                updateUI(currentList)
+            // Tombol Bubble Sort A-Z
+            btnSortAZ?.setOnClickListener {
+                currentSortOrder = "ASC"
+                val sorted = bubbleSortAscending(currentList.toMutableList())
+                updateUI(sorted)
+                Log.d(TAG, "Daftar diurutkan A-Z")
             }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+
+            // Tombol Bubble Sort Z-A
+            btnSortZA?.setOnClickListener {
+                currentSortOrder = "DESC"
+                val sorted = bubbleSortDescending(currentList.toMutableList())
+                updateUI(sorted)
+                Log.d(TAG, "Daftar diurutkan Z-A")
+            }
+
+            // Linear Search Real-time
+            etSearch?.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val query = s.toString()
+                    var results = if (query.isNotEmpty()) {
+                        linearSearch(query).toMutableList()
+                    } else {
+                        coffeeArray.toMutableList()
+                    }
+
+                    // Terapkan sortir otomatis pada hasil pencarian
+                    results = when (currentSortOrder) {
+                        "ASC" -> bubbleSortAscending(results).toMutableList()
+                        "DESC" -> bubbleSortDescending(results).toMutableList()
+                        else -> results
+                    }
+
+                    updateUI(results)
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error di MainActivity: ${e.message}")
+        }
     }
 
-    // Modul 6 - Implementasi Linear Search O(n)
     private fun linearSearch(query: String): List<CoffeeItem> {
-        val results = mutableListOf<CoffeeItem>()
         val lowerQuery = query.lowercase().trim()
-
-        for (item in coffeeArray) {
-            if (item.name.lowercase().contains(lowerQuery) ||
-                item.category.lowercase().contains(lowerQuery)) {
-                results.add(item)
-            }
+        return coffeeArray.filter {
+            it.name.lowercase().contains(lowerQuery) || it.category.lowercase().contains(lowerQuery)
         }
-        return results
     }
 
-    // Modul 7 - Bubble Sort A-Z berdasarkan nama kopi
     private fun bubbleSortAscending(list: MutableList<CoffeeItem>): List<CoffeeItem> {
         val n = list.size
         for (i in 0 until n - 1) {
@@ -114,7 +114,6 @@ class MainActivity : ComponentActivity() {
         return list
     }
 
-    // Modul 7 - Bubble Sort Z-A berdasarkan nama kopi
     private fun bubbleSortDescending(list: MutableList<CoffeeItem>): List<CoffeeItem> {
         val n = list.size
         for (i in 0 until n - 1) {
@@ -132,27 +131,25 @@ class MainActivity : ComponentActivity() {
     private fun updateUI(results: List<CoffeeItem>) {
         currentList = results.toMutableList()
         updateResultCount(results.size)
-        
+
         if (results.isEmpty()) {
-            tvEmpty.visibility = View.VISIBLE
-            listView?.visibility = View.GONE
+            tvEmpty?.visibility = View.VISIBLE
             gridView?.visibility = View.GONE
         } else {
-            tvEmpty.visibility = View.GONE
-            listView?.visibility = View.VISIBLE
+            tvEmpty?.visibility = View.GONE
             gridView?.visibility = View.VISIBLE
             adapter.updateData(results)
         }
     }
 
     private fun updateResultCount(count: Int) {
-        tvResultCount.text = "Menampilkan $count dari ${coffeeArray.size} menu"
+        tvResultCount?.text = "Menampilkan $count dari ${coffeeArray.size} menu"
     }
 
     inner class CoffeeAdapter(private var displayList: List<CoffeeItem>) : BaseAdapter() {
         override fun getCount(): Int = displayList.size
-        override fun getItem(position: Int): Any = displayList[position]
-        override fun getItemId(position: Int): Long = position.toLong()
+        override fun getItem(position: Int) = displayList[position]
+        override fun getItemId(position: Int) = position.toLong()
 
         fun updateData(newList: List<CoffeeItem>) {
             displayList = newList
@@ -162,10 +159,23 @@ class MainActivity : ComponentActivity() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val view = convertView ?: layoutInflater.inflate(R.layout.item_coffee, parent, false)
             val item = displayList[position]
-            
-            view.findViewById<TextView>(R.id.textName).text = item.name
-            view.findViewById<TextView>(R.id.textCategory).text = item.category
-            
+
+            val nameText = view.findViewById<TextView>(R.id.textName)
+            val categoryText = view.findViewById<TextView>(R.id.textCategory)
+            val iconImage = view.findViewById<ImageView>(R.id.imgCoffeeIcon)
+
+            nameText.text = item.name
+            categoryText.text = item.category
+
+            // MODUL 9 - Catchy UI: Warna Ikon berdasarkan Kategori
+            val colorCode = when (item.category) {
+                "Espresso Based" -> "#3E2723" // Dark Brown
+                "Milk Based" -> "#8D6E63"     // Light Brown
+                "Manual Brew" -> "#BF360C"    // Deep Orange
+                else -> "#1B5E20"              // Green for Local
+            }
+            iconImage.setColorFilter(Color.parseColor(colorCode))
+
             return view
         }
     }

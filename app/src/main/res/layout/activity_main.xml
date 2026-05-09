@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Header Menu Kopi -->
+    <!-- Header BrewList -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Menu Kopi"
+        android:text="BrewList"
         android:padding="20dp"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -66,13 +66,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/listViewCoffee"
+        <!-- Menggunakan GridView 2 kolom untuk Portrait juga -->
+        <GridView
+            android:id="@+id/gridViewCoffee"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#F5F5F5"
-            android:divider="#EEEEEE"
-            android:dividerHeight="1dp" />
+            android:numColumns="2"
+            android:padding="8dp"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:background="#F5F5F5" />
 
         <TextView
             android:id="@+id/tvEmpty"

@@ -1,7 +1,5 @@
 package com.example.aplikasi_menu_kopi
 
-// Modul 6 - Struktur Data Array (bukan database)
-// Total data: 20 item menu kopi
 val coffeeArray: Array<CoffeeItem> = arrayOf(
 
     // Espresso Based
