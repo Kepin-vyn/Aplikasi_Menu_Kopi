@@ -1,7 +1,7 @@
 # UTS Pemrograman Seluler - Aplikasi Katalog Menu Kopi (brewlist)
 
 ## Identitas Mahasiswa
-*   **Nama Lengkap:** I Made Obi Pranata
+*   **Nama Lengkap:** Cevyn Eduard Imanuel Dapa Talu
 *   **NIM:** 42430055
 *   **Program Studi:** Teknologi Informasi
 
